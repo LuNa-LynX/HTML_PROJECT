@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Shopper - E-Commerce</title>
+    <style>
+        /* General Styles */
+        body { font-family:Georgia, 'Times New Roman', Times, serif; margin: 0; padding: 0; background-color:#355C7D ; color: white; min-height: 100vh;}
+        header { display: flex; justify-content: space-between; align-items: center; background-color: rgb(62, 114, 205); color: white; padding: 15px; }
+        .logo { font-size: 24px; font-weight: bold; }
+        #searchBar { padding: 8px; width: 40%; border-radius: 5px; border: none; background-color: #444; color: white; }
+        nav { text-align: center; background: rgb(62, 114, 205); padding: 10px; }
+        nav a { color: white; text-decoration: none; margin: 0 15px; font-size: 18px; }
+        .container { padding: 20px; text-align: center;}
+        .category-title { font-size: 22px; margin-top: 20px; color: #ddd; }
+        .product-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;}
+        .product { background:rgb(97, 137, 207); border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); margin: 15px; padding: 15px; width: 250px; text-align: center; }
+        .product img { width: 100%; height: 180px; object-fit: cover; border-radius: 5px; }
+        .product img:hover{width: 250px;height: 300px;}
+        button { background-color: #28a745; color: white; border: none; padding: 10px; margin-top: 10px; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #218838; }
+        footer { text-align: center; background: rgb(62, 114, 205); color: white; padding: 10px; position: relative; bottom: 0; width: 100%; }
+        .cart-container, .wishlist-container { max-width: 500px; margin: auto; background: #333; padding: 20px; border-radius: 10px; }
+        .cart-container div, .wishlist-container div { margin-bottom: 10px; }
+        .order-button { background-color: #ff6347; color: white; border: none; padding: 10px; margin-top: 10px; border-radius: 5px; cursor: pointer; }
+        .order-button:hover { background-color: #e55347; }
+        .order-form { max-width: 500px; margin: auto; background: #333; padding: 20px; border-radius: 10px; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #444; border-radius: 5px; background-color: #444; color: white; }
+        .user-profile { max-width: 600px; margin: auto;  background: linear-gradient(135deg, #6A11CB, #2575FC); padding: 20px; border-radius: 10px; }
+        .user-profile img { border-radius: 50%; width: 120px; height: 120px; object-fit: cover; }
+        .user-profile h2 { margin-top: 20px; }
+
+        .menu-toggle {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+@media (max-width: 768px) {
+    nav {
+        display: none;
+        flex-direction: column;
+        background-color: rgb(31, 76, 154);
+        padding: 10px;
+    }
+
+    nav a {
+        margin: 10px 0;
+        font-size: 16px;
+    }
+    nav.show {
+    display: flex;
+  }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    nav.show {
+        display: flex;
+    }
+
+    header {
+        flex-direction: column;
+    }
+    
+    #searchBar {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">🛒 Smart Shopper</div>
+        <input type="text" id="searchBar" placeholder="Search products..." oninput="searchProducts()">
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <nav id="navbar">
+            <a href="#" onclick="loadHome()">Home</a>
+            <a href="#" onclick="loadCart()">Cart (<span id="cart-count">0</span>)</a>
+            <a href="#" onclick="loadWishlist()">Wishlist</a>
+            <a href="#" onclick="loadOrderHistory()">Order History</a>
+            <a href="#" onclick="loadProfile()">👤 Profile</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container" id="content"></div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Smart Shopper. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+    document.getElementById("navbar").classList.toggle("show");
+}
+
+        // Sample Product Data
+        let products = {
+            "products": [
+                { id: 1, name: "Wireless Headphones", price: 99, image: "https://i5.walmartimages.com/asr/191a69ed-991e-47fd-990e-1813967d9dfe.6b0e8f237401c8093aa3a35beb31c3cb.jpeg" },
+                { id: 2, name: "Smart Watch", price: 149, image: "https://www.yankodesign.com/images/design_news/2022/02/innovative-smartwatch-designs-thatll-make-you-want-to-trade-in-your-apple-watch-series-7/OnePlus-Concept-One-Watch-6.jpeg" },
+                { id: 3, name: "Gaming Mouse", price: 59, image: "https://th.bing.com/th/id/R.647978d43cf472908b184a648eef97c2?rik=kqRiZDVkxxPPAw&riu=http%3a%2f%2fcdn.shopify.com%2fs%2ffiles%2f1%2f1693%2f6515%2fproducts%2ffanduco-mice-black-silent-wireless-gaming-mouse-28275772499_600x.jpg%3fv%3d1509185105&ehk=G7jgGqr6t4TKlgAYrnNCpIKV%2fZIRl97I5jtU3q8rbjE%3d&risl=&pid=ImgRaw&r=0" },
+                { id: 4, name: "Speaker", price: 79, image: "https://m.media-amazon.com/images/I/71UeNxCdBCL.jpg"},
+                { id: 5, name: "speaker Speaker", price: 88, image: "https://i5.walmartimages.com/asr/5bc680fc-117d-4352-a414-63acb2901118_1.dd56eb1eed7c68a304247537070f2868.jpeg"},
+                { id: 6, name: "Bluetooth Speaker", price: 99, image: "https://th.bing.com/th/id/OIP.pda6kUivaLJTR9mlWN_lggHaHa?rs=1&pid=ImgDetMain"},
+                { id: 7, name: "Bluetooth Speaker", price: 100, image: "https://th.bing.com/th/id/OIP.E1r8PW6JFykRnZfo_Gwv2AHaE6?rs=1&pid=ImgDetMain"},
+                { id: 8, name: "speaker normal", price: 69, image:"https://i.pinimg.com/originals/56/5e/0f/565e0f8a3858f199e2436e82a3d685ca.jpg"}
+            ],
+            "Fashion": [
+                { id: 5, name: "Running Shoes", price: 89, image: "https://th.bing.com/th/id/OIP.IaRB9MZe7-G-2WhBbNDOrgHaHa?w=1200&h=1200&rs=1&pid=ImgDetMain" },
+                { id: 6, name: "Trekking Shoes", price: 129, image:"https://n.nordstrommedia.com/id/sr3/e7f8cf51-008c-4638-9945-ea8875cd151e.jpeg?crop=pad&pad_color=FFF&format=jpeg&trim=color&trimcolor=FFF&w=780&h=838" },
+                { id: 7, name: "Winter Jacket", price: 99, image: "https://images-na.ssl-images-amazon.com/images/I/717QTKQ5yvL._AC_UL1400_.jpg" },
+                { id: 8, name: "Sports Watch", price: 69, image: "https://www.pablogiftshop.com/wp-content/uploads/2020/11/m8355-curren-blue-new-fashion-mens-watches-with-stainless-steel-top-brand-luxury-sports-chronograph-quartz-watch-4.jpg" }
+            ],
+            "Home & Kitchen": [
+                { id: 9, name: "Cookware Set", price: 199, image: "https://th.bing.com/th/id/OIP.Atz0SVXr0VdCvGy643HF-AHaFf?rs=1&pid=ImgDetMain" },
+                { id: 10, name: "Dining Table", price: 399, image: "https://th.bing.com/th/id/OIP.-hr2jezTivF_5ywBdiDQ_gHaFw?rs=1&pid=ImgDetMain" },
+                { id: 11, name: "Blender", price: 49, image: "https://images-na.ssl-images-amazon.com/images/I/7140AqK211L._AC_SL1500_.jpg" },
+                { id: 12, name: "Microwave", price: 129, image: "https://i5.walmartimages.com/asr/c2e15fb6-487d-45e6-b1ac-faaac2105e75_1.81c76d946ac2e4690632ebd53b6ef8a7.jpeg" }
+            ],
+            // Add other categories like "Beauty & Health", "Books", etc.
+        };
+
+        let cart = [];
+        let wishlist = [];
+
+        function searchProducts() {
+        let query = document.getElementById("searchBar").value.toLowerCase();
+        let content = document.getElementById("content");
+
+        if (query.trim() === "") {
+        loadHome(); // Reload all products if search is empty
+        return;
+        }
+
+        content.innerHTML = `<h2>Search Results</h2><div class="product-container"></div>`;
+        let resultsContainer = document.querySelector(".product-container");
+
+        let foundProducts = Object.values(products).flat().filter(product => 
+        product.name.toLowerCase().includes(query)
+        );
+
+        if (foundProducts.length === 0) {
+        resultsContainer.innerHTML = `<p>No products found.</p>`;
+        return;
+        }
+
+        foundProducts.forEach(product => {
+        let productDiv = document.createElement("div");
+        productDiv.classList.add("product");
+        productDiv.innerHTML = `
+            <img src="${product.image}" alt="${product.name}">
+            <h3>${product.name}</h3>
+            <p>$${product.price}</p>
+            <button onclick="addToCart(${product.id})">Add to Cart</button>
+            <button onclick="addToWishlist(${product.id})">Add to Wishlist</button>
+        `;
+        resultsContainer.appendChild(productDiv);
+        });
+        }
+
+        // User Profile Data
+        let userProfile = {
+            name: "John Doe",
+            profilePicture: " https://i.pinimg.com/originals/76/97/c9/7697c98a7865ef339d977962fabcf1ae.jpg ",
+            address: "123 Main Street, City, Country",
+            phone: "+123456789",
+            gender: "Male"
+        };
+
+        // Load Home Page
+        function loadHome() {
+            let content = document.getElementById("content");
+            content.innerHTML = `<h2>Shop by Category</h2>`;
+
+            Object.keys(products).forEach(category => {
+                content.innerHTML += `<h3 class="category-title">${category}</h3><div class="product-container" id="${category.replace(/\s+/g, '-')}"></div>`;
+
+                products[category].forEach(product => {
+                    let productDiv = document.createElement("div");
+                    productDiv.classList.add("product");
+                    productDiv.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}">
+                        <h3>${product.name}</h3>
+                        <p>$${product.price}</p>
+                        <button onclick="addToCart(${product.id})">Add to Cart</button>
+                        <button onclick="addToWishlist(${product.id})">Add to Wishlist</button>
+                    `;
+                    document.getElementById(category.replace(/\s+/g, '-')).appendChild(productDiv);
+                });
+            });
+        }
+
+        // Add to Cart
+        function addToCart(id) {
+            let product = Object.values(products).flat().find(p => p.id === id);
+            cart.push(product);
+            document.getElementById("cart-count").innerText = cart.length;
+            alert(`${product.name} added to cart!`);
+        }
+
+        // Add to Wishlist
+        function addToWishlist(id) {
+            let product = Object.values(products).flat().find(p => p.id === id);
+            wishlist.push(product);
+            alert(`${product.name} added to wishlist!`);
+        }
+
+        // Load Cart
+        function loadCart() {
+            let content = document.getElementById("content");
+            content.innerHTML = `<h2>Your Cart</h2><div class="cart-container"></div>`;
+
+            if (cart.length === 0) {
+                document.querySelector(".cart-container").innerHTML = "<p>Your cart is empty.</p>";
+                return;
+            }
+
+            let total = 0;
+            cart.forEach(product => {
+                total += product.price;
+                let div = document.createElement("div");
+                div.innerHTML = `<p>${product.name} - $${product.price}</p>`;
+                document.querySelector(".cart-container").appendChild(div);
+            });
+
+            document.querySelector(".cart-container").innerHTML += `
+                <h3>Total: $${total}</h3>
+                <button class="order-button" onclick="checkout()">Order Now</button>
+            `;
+        }
+
+        // Checkout Process
+        function checkout() {
+            let content = document.getElementById("content");
+            content.innerHTML = `
+                <div class="order-form">
+                    <h2>Enter Your Details</h2>
+                    <input type="text" id="address" placeholder="Enter your address" required>
+                    <input type="text" id="phone" placeholder="Enter your phone number" required>
+                    <select id="payment-method">
+                        <option value="card">Card</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="cod">Cash on Delivery</option>
+                    </select>
+                    <button onclick="confirmOrder()">Confirm Order</button>
+                </div>
+            `;
+        }
+
+        // Confirm Order and Show Delivery Date
+        function confirmOrder() {
+        let address = document.getElementById("address").value;
+        let phone = document.getElementById("phone").value;
+        let paymentMethod = document.getElementById("payment-method").value;
+
+        if (!address || !phone || !paymentMethod) {
+        alert("Please fill all the details.");
+        return;
+        }
+
+        let deliveryDate = new Date();
+        deliveryDate.setDate(deliveryDate.getDate() + 3); // Estimated delivery in 3 days
+
+        let orderDetails = {
+        products: [...cart],
+        total: cart.reduce((sum, item) => sum + item.price, 0),
+        address: address,
+        phone: phone,
+        paymentMethod: paymentMethod,
+        deliveryDate: deliveryDate.toDateString()
+        };
+
+        // Get existing orders or initialize empty array
+        let orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
+        orderHistory.push(orderDetails); // Add new order
+        localStorage.setItem("orderHistory", JSON.stringify(orderHistory)); // Save to localStorage
+
+        alert(`Order confirmed! Your delivery date is: ${deliveryDate.toDateString()}`);
+
+        cart = []; // Clear cart after order
+        document.getElementById("cart-count").innerText = cart.length;
+        loadHome();
+        }
+
+        function loadOrderHistory() {
+        let content = document.getElementById("content");
+        content.innerHTML = `<h2>Your Order History</h2><div class="order-history-container"></div>`;
+
+        let orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
+
+        if (orderHistory.length === 0) {
+        document.querySelector(".order-history-container").innerHTML = "<p>No past orders found.</p>";
+        return;
+        }
+
+        orderHistory.forEach((order, index) => {
+        let orderDiv = document.createElement("div");
+        orderDiv.classList.add("order-container");
+        orderDiv.style = "background: #333; padding: 15px; border-radius: 10px; margin-bottom: 10px;";
+
+        let productList = order.products.map(p => `<li>${p.name} - $${p.price}</li>`).join("");
+
+        orderDiv.innerHTML = `
+            <h3>Order #${index + 1}</h3>
+            <ul>${productList}</ul>
+            <p><strong>Total:</strong> $${order.total}</p>
+            <p><strong>Address:</strong> ${order.address}</p>
+            <p><strong>Phone:</strong> ${order.phone}</p>
+            <p><strong>Payment:</strong> ${order.paymentMethod}</p>
+            <p><strong>Delivery Date:</strong> ${order.deliveryDate}</p>
+        `;
+
+        document.querySelector(".order-history-container").appendChild(orderDiv);
+        });
+        }
+
+        function clearOrderHistory() {
+    localStorage.removeItem("orderHistory");
+    alert("Order history has been cleared.");
+    loadOrderHistory(); // Optionally refresh the view
+}
+//localStorage.removeItem("orderHistory");
+
+        // Load Wishlist
+        function loadWishlist() {
+            let content = document.getElementById("content");
+            content.innerHTML = `<h2>Your Wishlist</h2><div class="wishlist-container"></div>`;
+
+            if (wishlist.length === 0) {
+                document.querySelector(".wishlist-container").innerHTML = "<p>Your wishlist is empty.</p>";
+                return;
+            }
+
+            wishlist.forEach(product => {
+                let div = document.createElement("div");
+                div.innerHTML = `<p>${product.name} - $${product.price}</p>`;
+                document.querySelector(".wishlist-container").appendChild(div);
+            });
+
+            document.querySelector(".wishlist-container").innerHTML += `
+                <button class="order-button" onclick="checkout()">Order Now</button>
+            `;
+        }
+
+        // Load Profile Page
+        function loadProfile() {
+    let userEmail = localStorage.getItem('userEmail'); // ✅ Get stored user email
+
+    let content = document.getElementById("content");
+    content.innerHTML = `
+        <div class="user-profile">
+            <h2>Welcome, <span id="user-email">${userEmail ? userEmail : "Guest"}</span>!</h2> <!-- ✅ Display User Email -->
+            <h3>${userProfile.name}'s Profile</h3>
+            <img src="${userProfile.profilePicture}" alt="Profile Picture">
+            <p><strong>Address:</strong> ${userProfile.address}</p>
+            <p><strong>Phone:</strong> ${userProfile.phone}</p>
+            <p><strong>Gender:</strong> ${userProfile.gender}</p>
+            <button id="logout-button">Log Out</button>
+        </div>
+    `;
+
+    // ✅ Add Logout Functionality
+    document.getElementById('logout-button').addEventListener('click', function () {
+        localStorage.removeItem('userEmail'); // Clear user session
+        window.location.href = "signin.html"; // Redirect to login page
+    });
+}
+
+
+        // Initial Load
+        loadHome();
+    </script>
+
+</body>
+</html>
