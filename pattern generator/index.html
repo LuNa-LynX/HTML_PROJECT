@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pattern Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+  <h1>Pattern Generator</h1>
+  <label for="rows">Enter number of rows(1 to 9): </label>
+  <input type="number" id="rows" placeholder="e.g. 5">
+  <!---label for="colorPicker">Choose pattern color:</label>
+  <input type="color" id="colorPicker" value="#7c3aed">--->
+<br>
+  <label for="patternType">Choose pattern type:</label>
+  <select id="patternType">
+    <option value="triangle">Right Triangle</option>
+    <option value="pyramid">Pyramid</option>
+    <option value="inverted">Inverted Triangle</option>
+    <option value="numbers">Number Right Triangle</option>
+    <option value="numPyramid">Number Pyramid</option>
+    <option value="square">Square</option>
+    <option value="hollowInverted">Hollow Inverted Triangle</option>
+
+  </select>
+  <br>
+<br>
+<br>
+  <button id="generateBtn" style="text-align: right;">Generate</button>
+
+<br>
+<br>
+  <pre id="output">Pattern will appear here...</pre>
+</div>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+/* style.css — Pastel Light Theme */
+:root {
+  --bg-color: #fefefe;
+  --container-bg: #ffffff;
+  --accent-color: #a78bfa; /* Soft lavender */
+  --text-color: #333;
+  --pre-bg: #f3f0ff;
+  --button-bg: #a78bfa;
+  --button-hover: #7c3aed;
+  --input-border: #dcdcdc;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.container {
+  background: var(--container-bg);
+  padding: 30px 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  max-width: 650px;
+  margin: auto;
+  transition: box-shadow 0.3s ease;
+}
+
+.container:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+h1 {
+  color: var(--accent-color);
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+input, select {
+  padding: 10px;
+  margin: 10px auto;
+  font-size: 16px;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  width: 80%;
+  max-width: 300px;
+  display: block;
+}
+
+button {
+  padding: 10px 24px;
+  font-size: 16px;
+  background-color: var(--button-bg);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: var(--button-hover);
+}
+
+pre {
+  background-color: var(--pre-bg);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: left;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-top: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #222;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+}
